@@ -1,7 +1,7 @@
-﻿using Lms.Api.ResourceParameters;
-using Lms.Core.Entities;
+﻿using Lms.Core.Entities;
+using Lms.Core.ResourceParameters;
 
-namespace Lms.Api.Services
+namespace Lms.Core.IDAL
 {
     public interface ICourseLibraryRepository
     {

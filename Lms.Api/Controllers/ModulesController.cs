@@ -132,7 +132,7 @@ namespace Lms.Api.Controllers
 
             var moduleToPatch = mapper.Map<ModuleForUpdateDto>(moduleFromRepo);
             //ToDo PatchModules: Mapper funkar inte. Fixa så det funkar....
-            //AutoMapper.AutoMapperMappingException: Missing type map configuration or unsupported mapping.
+            //ToDo PatchModules: AutoMapper.AutoMapperMappingException: Missing type map configuration or unsupported mapping.
 
             patchDocument.ApplyTo(moduleToPatch, ModelState);
 

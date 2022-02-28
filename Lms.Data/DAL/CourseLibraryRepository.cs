@@ -1,9 +1,10 @@
-﻿using Lms.Api.ResourceParameters;
-using Lms.Core.Entities;
+﻿using Lms.Core.Entities;
+using Lms.Core.IDAL;
+using Lms.Core.ResourceParameters;
 using Lms.Data.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Lms.Api.Services
+namespace Lms.Data.DAL
 {
     public class CourseLibraryRepository : IDisposable, ICourseLibraryRepository
     {
@@ -110,7 +111,7 @@ namespace Lms.Api.Services
 
         public bool Save()
         {
-            return (_context.SaveChanges() >= 0);
+            return _context.SaveChanges() >= 0;
         }
 
         public void Dispose()

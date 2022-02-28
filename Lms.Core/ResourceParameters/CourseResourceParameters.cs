@@ -1,4 +1,4 @@
-﻿namespace Lms.Api.ResourceParameters
+﻿namespace Lms.Core.ResourceParameters
 {
     public class CourseResourceParameters
     {

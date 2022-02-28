@@ -12,8 +12,8 @@ using Lms.Data.Data;
 using Lms.Core.Dto;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
-using Lms.Api.Services;
-using Lms.Api.ResourceParameters;
+using Lms.Core.IDAL;
+using Lms.Core.ResourceParameters;
 
 namespace Lms.Api.Controllers
 {

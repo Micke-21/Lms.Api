@@ -4,7 +4,8 @@ using Lms.Data.Data;
 using Lms.Api.Extensions;
 using Newtonsoft.Json.Serialization;
 using Lms.Data.Mappers;
-using Lms.Api.Services;
+using Lms.Data.DAL;
+using Lms.Core.IDAL;
 
 var builder = WebApplication.CreateBuilder(args);
 
