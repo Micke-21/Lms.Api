@@ -11,6 +11,9 @@ using Lms.Core.Entities;
 using Lms.Data.Data;
 using Lms.Core.Dto;
 using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
+using Lms.Api.Services;
+using Lms.Api.ResourceParameters;
 
 namespace Lms.Api.Controllers
 {
@@ -18,36 +21,44 @@ namespace Lms.Api.Controllers
     [ApiController]
     public class CoursesController : ControllerBase
     {
-        private readonly LmsApiContext _context;
+        //private readonly LmsApiContext _context;
         private readonly IMapper mapper;
+        private readonly ICourseLibraryRepository _repository;
+        private readonly ILogger<CoursesController> _logger;
 
-        public CoursesController(LmsApiContext context, IMapper mapper)
+        public CoursesController(LmsApiContext context, IMapper mapper, ICourseLibraryRepository repository, ILogger<CoursesController> logger)
         {
-            _context = context;
+            //_context = context;
             this.mapper = mapper;
+            _repository = repository;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         // GET: api/Courses
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CourseDto>>> GetCourse()
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetCourses(
+            [FromQuery] CourseResourceParameters courseResourseParameters)
         {
-            //return await _context.Course.ToListAsync();
-            var corseDto = mapper.ProjectTo<CourseDto>(_context.Course);
-            //var corseDto =  mapper.ProjectTo<CourseDto>( _context.Course.Include(m => m.Modules));
+            var courses = await _repository.GetAllCourses(courseResourseParameters);
+            //ToDo GetCourses: courses har inga moduler
+
+            var corseDto = mapper.ProjectTo<CourseDto>((IQueryable)courses);
+            //ToDo GetCourses: efter Map så har den moduler?!
 
             return Ok(corseDto);
-            //return Ok(await corseDto.ToListAsync());
-            //return await _context.Course.Include(m => m.Modules).ToListAsync();
+
         }
 
         // GET: api/Courses/5
         [HttpGet("{id}")]
         public async Task<ActionResult<CourseDto>> GetCourse(int id)
         {
-            var course = mapper.Map<CourseDto>(await _context.Course.FindAsync(id));
+            //var course = mapper.Map<CourseDto>(await _context.Course.FindAsync(id));
+            var course = mapper.Map<CourseDto>(await _repository.GetCourseByIdAsync(id));
 
             if (course == null)
             {
+                _logger.LogInformation($"Course with id {id} wasn't found.");
                 return NotFound();
             }
 
@@ -63,7 +74,8 @@ namespace Lms.Api.Controllers
             //{
             //    return BadRequest();
             //}
-            var courseFromRepo = await _context.Course.FindAsync(id);
+            //var courseFromRepo = await _context.Course.FindAsync(id);
+            var courseFromRepo = await _repository.GetCourseByIdAsync(id);
 
             if (courseFromRepo == null)
             {
@@ -79,16 +91,19 @@ namespace Lms.Api.Controllers
                 //var courseToReturn = mapper.Map<CourseDto>(courseToAdd);
 
                 //return CreatedAtAction("GetCourse", new { id = courseToReturn.Id }, courseToReturn);
-                
+
                 //return NotFound();
             }
 
+            /*
             mapper.Map(course, courseFromRepo);
             _context.Entry(courseFromRepo).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                //await _context.SaveChangesAsync();
+                _repository.Save();
+                //throw new DbUpdateConcurrencyException();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -98,11 +113,19 @@ namespace Lms.Api.Controllers
                 }
                 else
                 {
-                    throw;
+                    //throw;
+                    return StatusCode(500);
                 }
             }
 
             return NoContent();
+            */
+            var courseToUpdate = mapper.Map<Course>(course);
+            courseToUpdate.Id = id;
+            var updatedCourse = await _repository.UpdateCourseAsync(courseToUpdate);
+            var courseDto = mapper.Map<CourseDto>(updatedCourse);
+            return Ok(courseDto);
+            //return NoContent();
         }
 
         // POST: api/Courses
@@ -110,35 +133,83 @@ namespace Lms.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<CourseDto>> PostCourse(CourseForUpdateDto course)
         {
-            var courseEntity = mapper.Map<Course>(course);
+            if (ModelState.IsValid)
+            {
+                var courseEntity = mapper.Map<Course>(course);
 
-            _context.Course.Add(courseEntity);
-            await _context.SaveChangesAsync();
+                //_context.Course.Add(courseEntity);
+                //await _context.SaveChangesAsync();
 
-            var courseToReturn = mapper.Map<CourseDto>(courseEntity);
-            return CreatedAtAction("GetCourse", new { id = courseToReturn.Id }, courseToReturn);
-            
+                await _repository.InsertCourseAsync(courseEntity);
+
+
+                var courseToReturn = mapper.Map<CourseDto>(courseEntity);
+                return CreatedAtAction("GetCourse", new { id = courseToReturn.Id }, courseToReturn);
+            }
+            return BadRequest(ModelState);
         }
 
         // DELETE: api/Courses/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCourse(int id)
         {
-            var course = await _context.Course.FindAsync(id);
-            if (course == null)
+            //var course = await _context.Course.FindAsync(id);
+            //if (course == null)
+            //{
+            //    return NotFound();
+            //}
+
+            //_context.Course.Remove(course);
+            //await _context.SaveChangesAsync();
+
+            if (await _repository.DeleteCourseByIdAsync(id))
+            {
+                return NoContent();
+            }
+            return NotFound();
+        }
+
+
+        [HttpPatch("{courseId}")]
+        public async Task<ActionResult<CourseDto>> PatchCourse(int courseId,
+            JsonPatchDocument<CourseForUpdateDto> patchDocument)
+        {
+            //if (!CourseExists(courseId)) //ToDo Är inte denna koll onödig? Blir väl samma som nedan, två databasslagningar.
+            //{
+            //    return NotFound();
+            //}
+
+            //var courseFromRepo = await _context.Course.FindAsync(courseId);
+            var courseFromRepo = await _repository.GetCourseByIdAsync(courseId);
+            if (courseFromRepo == null)
             {
                 return NotFound();
             }
 
-            _context.Course.Remove(course);
-            await _context.SaveChangesAsync();
+            var courseToPatch = mapper.Map<CourseForUpdateDto>(courseFromRepo);
 
-            return NoContent();
+            patchDocument.ApplyTo(courseToPatch, ModelState);
+
+            if (!TryValidateModel(courseToPatch))
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            mapper.Map(courseToPatch, courseFromRepo);
+            //_context.Update(courseFromRepo);
+            //await _context.SaveChangesAsync();
+            
+            //return NoContent();
+
+            var updatdedCoourse = await _repository.UpdateCourseAsync(courseFromRepo);
+            return Ok(updatdedCoourse);
         }
 
-        private bool CourseExists(int id)
+        private async Task<bool> CourseExistsAsync(int id)
         {
-            return _context.Course.Any(e => e.Id == id);
+            //return _context.Course.Any(e => e.Id == id);
+
+            return await _repository.CourseExistsAsync(id);
         }
     }
 }

@@ -4,6 +4,7 @@ using Lms.Data.Data;
 using Lms.Api.Extensions;
 using Newtonsoft.Json.Serialization;
 using Lms.Data.Mappers;
+using Lms.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,14 +21,21 @@ builder.Services.AddControllers(opt=>opt.ReturnHttpNotAcceptable = true)
             new CamelCasePropertyNamesContractResolver();
     })
     .AddXmlDataContractSerializerFormatters();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(typeof(LmsMappings));
 
+
+IServiceCollection serviceCollection = builder.Services.AddScoped<ICourseLibraryRepository, CourseLibraryRepository>();
+
+
 var app = builder.Build();
 app.SeedDataAsync().GetAwaiter().GetResult();
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

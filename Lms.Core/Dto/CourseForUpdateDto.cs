@@ -10,7 +10,7 @@ namespace Lms.Core.Dto
     public class CourseForUpdateDto
     {
         [Required]
-        [MaxLength(20)]
+        [MaxLength(20, ErrorMessage ="Title får var max 20 tecken") ]
         public string Title { get; set; }
         public DateTime StartDate { get; set; }
 

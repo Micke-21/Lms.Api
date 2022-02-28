@@ -18,5 +18,6 @@ namespace Lms.Core.Dto
                 return StartDate.AddMonths(3);
             }
         }
+        public ICollection<ModuleDto> Modules { get; set; }
     }
 }

@@ -10,6 +10,7 @@ using Lms.Core.Entities;
 using Lms.Data.Data;
 using Lms.Core.Dto;
 using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace Lms.Api.Controllers
 {
@@ -81,7 +82,8 @@ namespace Lms.Api.Controllers
                 }
                 else
                 {
-                    throw;
+                    return StatusCode(500);
+                    //throw;
                 }
             }
 
@@ -118,6 +120,35 @@ namespace Lms.Api.Controllers
 
             return NoContent();
         }
+
+        [HttpPatch("{moduleId}")]
+        public async Task<ActionResult<ModuleDto>> PatchModule(int moduleId,
+            JsonPatchDocument<ModuleForUpdateDto> patchDocument)
+        {
+            if (!ModuleExists(moduleId)) { return NotFound(); } 
+
+            var moduleFromRepo = await _context.Module.FindAsync(moduleId);
+            if(moduleFromRepo == null) { return NotFound(); }
+
+            var moduleToPatch = mapper.Map<ModuleForUpdateDto>(moduleFromRepo);
+            //ToDo PatchModules: Mapper funkar inte. Fixa så det funkar....
+            //AutoMapper.AutoMapperMappingException: Missing type map configuration or unsupported mapping.
+
+            patchDocument.ApplyTo(moduleToPatch, ModelState);
+
+            if (!TryValidateModel(moduleToPatch))
+            {
+                return ValidationProblem(ModelState);
+            }
+             mapper.Map(moduleToPatch, moduleFromRepo);
+            _context.Update(moduleFromRepo);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+            
+        }
+
+
 
         private bool ModuleExists(int id)
         {
