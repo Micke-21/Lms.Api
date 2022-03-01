@@ -26,6 +26,7 @@ namespace Lms.Api.Controllers
         private readonly ICourseLibraryRepository _repository;
         private readonly ILogger<CoursesController> _logger;
 
+        
         public CoursesController(LmsApiContext context, IMapper mapper, ICourseLibraryRepository repository, ILogger<CoursesController> logger)
         {
             //_context = context;
@@ -49,6 +50,10 @@ namespace Lms.Api.Controllers
             var corseDto = mapper.Map<IEnumerable<CourseDto>>(courses);
             //ToDo GetCourses: efter Map så har den moduler?!
             //ToDo GetCourses: Det är mappningen som skiter sig när jag har tolist i dalen
+            //HACK ändrat till att mappa till en IEnumerable så funkar det och då har jag toList i dalen.
+            // Nu funkar även den där parameter att inkluderar moduler eller ej antar att det var
+            // så add jag hade hela contextet med förut så då mappades det in av den...
+
             _logger.LogInformation("After Mapping");
 
             return Ok(corseDto);
