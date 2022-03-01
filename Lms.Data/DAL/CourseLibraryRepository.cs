@@ -62,7 +62,8 @@ namespace Lms.Data.DAL
                 collection = collection.Where(s => s.Title.Contains(searchQuery));
             }
 
-            return  collection;
+            //return  collection;
+            return await collection.ToListAsync();
             //ToDO GetAllCourses: Sakll det inte vara .ToListAsync()??
             //ToDO GetAllCourses: Hur funkar det att läagg till sortering mm..
         }

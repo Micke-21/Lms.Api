@@ -39,16 +39,20 @@ namespace Lms.Api.Controllers
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetCourses(
             [FromQuery] CourseResourceParameters courseResourseParameters)
         {
+            _logger.LogInformation("Before GetAllCourses");
             var courses = await _repository.GetAllCourses(courseResourseParameters);
             //ToDo GetCourses: courses har inga moduler
+            _logger.LogInformation("After GetAllCourses");
 
+            _logger.LogInformation("Before Mapping");
             //var corseDto = mapper.ProjectTo<CourseDto>((IQueryable)courses);
-            var corseDto = mapper.ProjectTo<CourseDto>((IQueryable)courses);
+            var corseDto = mapper.Map<IEnumerable<CourseDto>>(courses);
             //ToDo GetCourses: efter Map så har den moduler?!
             //ToDo GetCourses: Det är mappningen som skiter sig när jag har tolist i dalen
+            _logger.LogInformation("After Mapping");
 
             return Ok(corseDto);
-
+            //HACK när jag inte har tolist så verkar det som SQL anropet sker här vid return...
         }
 
         // GET: api/Courses/5
