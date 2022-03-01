@@ -32,15 +32,15 @@ namespace Lms.Data.DAL
         {
             return await _context.Course.ToListAsync();
         }
-        public async Task<IEnumerable<Course>> GetAllCourses(CourseResourceParameters courseResourseParameters)
+        public async Task<(IEnumerable<Course>, PaginationMetadata)> GetAllCourses(CourseResourceParameters courseResourseParameters, int pageNumber, int pageSize)
         {
-            if (courseResourseParameters.IncludeModules == null
-                && string.IsNullOrWhiteSpace(courseResourseParameters.Sort)
-                && string.IsNullOrWhiteSpace(courseResourseParameters.SearchQuery)
-                && string.IsNullOrWhiteSpace(courseResourseParameters.Filter))
-            {
-                return await GetAllCourses();
-            }
+            //if (courseResourseParameters.IncludeModules == null
+            //    && string.IsNullOrWhiteSpace(courseResourseParameters.Sort)
+            //    && string.IsNullOrWhiteSpace(courseResourseParameters.SearchQuery)
+            //    && string.IsNullOrWhiteSpace(courseResourseParameters.Filter))
+            //{
+            //    return await GetAllCourses();
+            //}
 
             var collection = _context.Course as IQueryable<Course>;
 
@@ -62,8 +62,21 @@ namespace Lms.Data.DAL
                 collection = collection.Where(s => s.Title.Contains(searchQuery));
             }
 
+
+            // use pagination
+            var totalItemCount = await collection.CountAsync();
+
+            var paginationMetadata = new PaginationMetadata(
+                totalItemCount, pageSize, pageNumber);
+
+            var collectionToReturn = await collection//.OrderBy(c=> c.Title)
+                .Skip(pageSize * (pageNumber - 1))
+                .Take(pageSize)
+                .ToListAsync();
+            return (collectionToReturn, paginationMetadata);
+
             //return  collection;
-            return await collection.ToListAsync();
+            //return await collection.ToListAsync();
             //ToDO GetAllCourses: Sakll det inte vara .ToListAsync()??
             //ToDO GetAllCourses: Hur funkar det att läagg till sortering mm..
         }

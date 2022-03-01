@@ -14,6 +14,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Lms.Core.IDAL;
 using Lms.Core.ResourceParameters;
+using System.Text.Json;
 
 namespace Lms.Api.Controllers
 {
@@ -26,7 +27,8 @@ namespace Lms.Api.Controllers
         private readonly ICourseLibraryRepository _repository;
         private readonly ILogger<CoursesController> _logger;
 
-        
+        const int maxCoursesPageSize = 20;
+
         public CoursesController(LmsApiContext context, IMapper mapper, ICourseLibraryRepository repository, ILogger<CoursesController> logger)
         {
             //_context = context;
@@ -38,10 +40,21 @@ namespace Lms.Api.Controllers
         // GET: api/Courses
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetCourses(
-            [FromQuery] CourseResourceParameters courseResourseParameters)
+            [FromQuery] CourseResourceParameters courseResourseParameters, int pageNumber = 1, int pageSize = 10)
         {
+            if (pageSize > maxCoursesPageSize)
+            {
+                pageSize = maxCoursesPageSize;
+            }
+
+            //Using pagination
+            var (courses, paginationMetadata) = await _repository.GetAllCourses(courseResourseParameters, pageNumber, pageSize);
+            
+            Response.Headers.Add("X-Pagination",
+                JsonSerializer.Serialize(paginationMetadata));  
+            
             _logger.LogInformation("Before GetAllCourses");
-            var courses = await _repository.GetAllCourses(courseResourseParameters);
+            //var courses = await _repository.GetAllCourses(courseResourseParameters);
             //ToDo GetCourses: courses har inga moduler
             _logger.LogInformation("After GetAllCourses");
 
