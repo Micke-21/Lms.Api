@@ -36,12 +36,19 @@ namespace Lms.Data.DAL
         {
             if (courseResourseParameters.IncludeModules == null
                 && string.IsNullOrWhiteSpace(courseResourseParameters.Sort)
-                && string.IsNullOrWhiteSpace(courseResourseParameters.SearchQuery))
+                && string.IsNullOrWhiteSpace(courseResourseParameters.SearchQuery)
+                && string.IsNullOrWhiteSpace(courseResourseParameters.Filter))
             {
                 return await GetAllCourses();
             }
 
             var collection = _context.Course as IQueryable<Course>;
+
+            if (!string.IsNullOrWhiteSpace(courseResourseParameters.Filter))
+            {
+                var filter = courseResourseParameters.Filter.Trim();
+                collection = collection.Where(s => s.Title == filter);
+            }
 
             if (courseResourseParameters.IncludeModules == true)
             {
@@ -55,7 +62,7 @@ namespace Lms.Data.DAL
                 collection = collection.Where(s => s.Title.Contains(searchQuery));
             }
 
-            return collection;
+            return  collection;
             //ToDO GetAllCourses: Sakll det inte vara .ToListAsync()??
             //ToDO GetAllCourses: Hur funkar det att läagg till sortering mm..
         }

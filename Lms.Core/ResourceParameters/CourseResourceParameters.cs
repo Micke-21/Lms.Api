@@ -7,5 +7,7 @@
         public string? Sort { get; set; } = string.Empty;
 
         public string? SearchQuery { get; set; } = string.Empty;
+
+        public string? Filter { get; set; } = string.Empty;
     }
 }

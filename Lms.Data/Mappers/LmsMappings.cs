@@ -10,7 +10,7 @@ namespace Lms.Data.Mappers
     {
         public LmsMappings()
         {
-            CreateMap<Course, CourseDto>();
+            CreateMap<Course, CourseDto>().ReverseMap();
             CreateMap<CourseForUpdateDto, Course>();
             CreateMap<Course, CourseForUpdateDto>();
 

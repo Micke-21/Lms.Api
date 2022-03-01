@@ -42,8 +42,10 @@ namespace Lms.Api.Controllers
             var courses = await _repository.GetAllCourses(courseResourseParameters);
             //ToDo GetCourses: courses har inga moduler
 
+            //var corseDto = mapper.ProjectTo<CourseDto>((IQueryable)courses);
             var corseDto = mapper.ProjectTo<CourseDto>((IQueryable)courses);
             //ToDo GetCourses: efter Map så har den moduler?!
+            //ToDo GetCourses: Det är mappningen som skiter sig när jag har tolist i dalen
 
             return Ok(corseDto);
 
