@@ -3,8 +3,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lms.Api.Extensions
 {
+    /// <summary>
+    /// Extension used to seed the data
+    /// </summary>
     public static class ApplicationBuilderExtensions
     {
+        /// <summary>
+        /// Seeds the datadase
+        /// </summary>
+        /// <param name="app">Applicationn nbuilder</param>
+        /// <returns>Applicationbuilder</returns>
         public static async Task<IApplicationBuilder> SeedDataAsync(this IApplicationBuilder app)
         {
             using (var scope = app.ApplicationServices.CreateScope())

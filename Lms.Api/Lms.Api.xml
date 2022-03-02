@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Lms.Api</name>
+    </assembly>
+    <members>
+        <member name="T:Lms.Api.Controllers.CoursesController">
+            <summary>
+            CourseController handling the Courses
+            </summary>
+        </member>
+        <member name="M:Lms.Api.Controllers.CoursesController.#ctor(Lms.Data.Data.LmsApiContext,AutoMapper.IMapper,Lms.Core.IDAL.ICourseLibraryRepository,Microsoft.Extensions.Logging.ILogger{Lms.Api.Controllers.CoursesController})">
+            <summary>
+            CourseController constructor
+            </summary>
+            <param name="context"></param>
+            <param name="mapper"></param>
+            <param name="repository"></param>
+            <param name="logger"></param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:Lms.Api.Controllers.CoursesController.GetCourses(Lms.Core.ResourceParameters.CourseResourceParameters,System.Int32,System.Int32)">
+            <summary>
+            Get all Courses <paramref name="courseResourseParameters"/>
+            </summary>
+            <param name="courseResourseParameters">Parametrar för sökning och filtrering</param>
+            <param name="pageNumber">Aktuell sida</param>
+            <param name="pageSize">Sidstorlek</param>
+            <returns>Returns requested courses</returns>
+            <response code="200">Returns the requested course</response>
+        </member>
+        <member name="M:Lms.Api.Controllers.CoursesController.GetCourse(System.Int32)">
+            <summary>
+            Get course by id
+            </summary>
+            <param name="id">The id to search for</param>
+            <returns>Course or not found</returns>
+        </member>
+        <member name="M:Lms.Api.Controllers.CoursesController.PutCourse(System.Int32,Lms.Core.Dto.CourseForUpdateDto)">
+            <summary>
+            Full Update of a course
+            </summary>
+            <param name="id">Id to course to update</param>
+            <param name="course">Course data</param>
+            <returns>Returns th updated course</returns>
+        </member>
+        <member name="M:Lms.Api.Controllers.CoursesController.PostCourse(Lms.Core.Dto.CourseForUpdateDto)">
+            <summary>
+            Create a new course
+            </summary>
+            <param name="course">course data</param>
+            <returns>Returns the creted course</returns>
+        </member>
+        <member name="M:Lms.Api.Controllers.CoursesController.DeleteCourse(System.Int32)">
+            <summary>
+            Delete a course
+            </summary>
+            <param name="id">Id of course to delete</param>
+            <returns>Nocontent</returns>
+        </member>
+        <member name="M:Lms.Api.Controllers.CoursesController.PatchCourse(System.Int32,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{Lms.Core.Dto.CourseForUpdateDto})">
+            <summary>
+            Partialy updating a course
+            </summary>
+            <param name="courseId">Id of course to update</param>
+            <param name="patchDocument">Update data</param>
+            <returns>Returns the updated course</returns>
+        </member>
+        <member name="T:Lms.Api.Extensions.ApplicationBuilderExtensions">
+            <summary>
+            Extension used to seed the data
+            </summary>
+        </member>
+        <member name="M:Lms.Api.Extensions.ApplicationBuilderExtensions.SeedDataAsync(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
+            <summary>
+            Seeds the datadase
+            </summary>
+            <param name="app">Applicationn nbuilder</param>
+            <returns>Applicationbuilder</returns>
+        </member>
+    </members>
+</doc>

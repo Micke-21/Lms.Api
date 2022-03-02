@@ -18,6 +18,9 @@ using System.Text.Json;
 
 namespace Lms.Api.Controllers
 {
+    /// <summary>
+    /// CourseController handling the Courses
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class CoursesController : ControllerBase
@@ -29,6 +32,14 @@ namespace Lms.Api.Controllers
 
         const int maxCoursesPageSize = 20;
 
+        /// <summary>
+        /// CourseController constructor
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="mapper"></param>
+        /// <param name="repository"></param>
+        /// <param name="logger"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public CoursesController(LmsApiContext context, IMapper mapper, ICourseLibraryRepository repository, ILogger<CoursesController> logger)
         {
             //_context = context;
@@ -38,7 +49,17 @@ namespace Lms.Api.Controllers
         }
 
         // GET: api/Courses
+        /// <summary>
+        /// Get all Courses <paramref name="courseResourseParameters"/>
+        /// </summary>
+        /// <param name="courseResourseParameters">Parametrar för sökning och filtrering</param>
+        /// <param name="pageNumber">Aktuell sida</param>
+        /// <param name="pageSize">Sidstorlek</param>
+        /// <returns>Returns requested courses</returns>
+        /// <response code="200">Returns the requested course</response>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetCourses(
             [FromQuery] CourseResourceParameters courseResourseParameters, int pageNumber = 1, int pageSize = 10)
         {
@@ -74,7 +95,14 @@ namespace Lms.Api.Controllers
         }
 
         // GET: api/Courses/5
+        /// <summary>
+        /// Get course by id
+        /// </summary>
+        /// <param name="id">The id to search for</param>
+        /// <returns>Course or not found</returns>
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<CourseDto>> GetCourse(int id)
         {
             //var course = mapper.Map<CourseDto>(await _context.Course.FindAsync(id));
@@ -90,8 +118,17 @@ namespace Lms.Api.Controllers
         }
 
         // PUT: api/Courses/5
+        /// <summary>
+        /// Full Update of a course
+        /// </summary>
+        /// <param name="id">Id to course to update</param>
+        /// <param name="course">Course data</param>
+        /// <returns>Returns th updated course</returns>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutCourse(int id, CourseForUpdateDto course)
         {
             //if (id != course.Id)
@@ -153,8 +190,15 @@ namespace Lms.Api.Controllers
         }
 
         // POST: api/Courses
+        /// <summary>
+        /// Create a new course
+        /// </summary>
+        /// <param name="course">course data</param>
+        /// <returns>Returns the creted course</returns>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<CourseDto>> PostCourse(CourseForUpdateDto course)
         {
             if (ModelState.IsValid)
@@ -174,7 +218,14 @@ namespace Lms.Api.Controllers
         }
 
         // DELETE: api/Courses/5
+        /// <summary>
+        /// Delete a course
+        /// </summary>
+        /// <param name="id">Id of course to delete</param>
+        /// <returns>Nocontent</returns>
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteCourse(int id)
         {
             //var course = await _context.Course.FindAsync(id);
@@ -193,8 +244,15 @@ namespace Lms.Api.Controllers
             return NotFound();
         }
 
-
+        /// <summary>
+        /// Partialy updating a course
+        /// </summary>
+        /// <param name="courseId">Id of course to update</param>
+        /// <param name="patchDocument">Update data</param>
+        /// <returns>Returns the updated course</returns>
         [HttpPatch("{courseId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<CourseDto>> PatchCourse(int courseId,
             JsonPatchDocument<CourseForUpdateDto> patchDocument)
         {

@@ -32,7 +32,9 @@ namespace Lms.Data.DAL
         {
             return await _context.Course.ToListAsync();
         }
-        public async Task<(IEnumerable<Course>, PaginationMetadata)> GetAllCourses(CourseResourceParameters courseResourseParameters, int pageNumber, int pageSize)
+        public async Task<(IEnumerable<Course>, PaginationMetadata)> GetAllCourses(
+            CourseResourceParameters courseResourseParameters, 
+            int pageNumber, int pageSize)
         {
             //if (courseResourseParameters.IncludeModules == null
             //    && string.IsNullOrWhiteSpace(courseResourseParameters.Sort)
