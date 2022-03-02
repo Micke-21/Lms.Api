@@ -21,6 +21,7 @@ namespace Lms.Api.Controllers
     /// <summary>
     /// CourseController handling the Courses
     /// </summary>
+    [Produces("application/json", "application/xml")]
     [Route("api/[controller]")]
     [ApiController]
     public class CoursesController : ControllerBase
@@ -126,6 +127,7 @@ namespace Lms.Api.Controllers
         /// <returns>Returns th updated course</returns>
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
