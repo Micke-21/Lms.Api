@@ -9,7 +9,7 @@
             CourseController handling the Courses
             </summary>
         </member>
-        <member name="M:Lms.Api.Controllers.CoursesController.#ctor(Lms.Data.Data.LmsApiContext,AutoMapper.IMapper,Lms.Core.IDAL.ICourseLibraryRepository,Microsoft.Extensions.Logging.ILogger{Lms.Api.Controllers.CoursesController})">
+        <member name="M:Lms.Api.Controllers.CoursesController.#ctor(AutoMapper.IMapper,Lms.Core.IDAL.ICourseLibraryRepository,Microsoft.Extensions.Logging.ILogger{Lms.Api.Controllers.CoursesController})">
             <summary>
             CourseController constructor
             </summary>
@@ -35,6 +35,7 @@
             </summary>
             <param name="id">The id to search for</param>
             <returns>Course or not found</returns>
+            <response code="200">Returns the requested course</response>
         </member>
         <member name="M:Lms.Api.Controllers.CoursesController.PutCourse(System.Int32,Lms.Core.Dto.CourseForUpdateDto)">
             <summary>

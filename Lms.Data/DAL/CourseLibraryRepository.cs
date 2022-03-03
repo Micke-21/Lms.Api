@@ -8,7 +8,7 @@ namespace Lms.Data.DAL
 {
     public class CourseLibraryRepository : IDisposable, ICourseLibraryRepository
     {
-        private LmsApiContext _context;
+        private readonly LmsApiContext _context;
 
         public CourseLibraryRepository(LmsApiContext context)
         {
@@ -129,12 +129,12 @@ namespace Lms.Data.DAL
 
         public async Task<bool> CourseExistsAsync(int courseId)
         {
-            return _context.Course.Any(e => e.Id == courseId);
+            return await _context.Course.AnyAsync(e => e.Id == courseId);
         }
 
-        public bool Save()
+        public async Task<bool> SaveAsync()
         {
-            return _context.SaveChanges() >= 0;
+            return await _context.SaveChangesAsync() >= 0;
         }
 
         public void Dispose()

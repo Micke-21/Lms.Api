@@ -41,11 +41,15 @@ namespace Lms.Api.Controllers
         /// <param name="repository"></param>
         /// <param name="logger"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public CoursesController(LmsApiContext context, IMapper mapper, ICourseLibraryRepository repository, ILogger<CoursesController> logger)
+        public CoursesController(/*LmsApiContext context,*/ IMapper mapper, ICourseLibraryRepository repository, ILogger<CoursesController> logger)
         {
+            //if (context is null)
+            //{
+            //    throw new ArgumentNullException(nameof(context));
+            //}
             //_context = context;
-            this.mapper = mapper;
-            _repository = repository;
+            this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -57,7 +61,7 @@ namespace Lms.Api.Controllers
         /// <param name="pageNumber">Aktuell sida</param>
         /// <param name="pageSize">Sidstorlek</param>
         /// <returns>Returns requested courses</returns>
-        /// <response code="200">Returns the requested course</response>
+        /// <response code="200">Returns the requested courses</response>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -101,6 +105,7 @@ namespace Lms.Api.Controllers
         /// </summary>
         /// <param name="id">The id to search for</param>
         /// <returns>Course or not found</returns>
+        /// <response code="200">Returns the requested course</response>
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -111,7 +116,8 @@ namespace Lms.Api.Controllers
 
             if (course == null)
             {
-                _logger.LogInformation($"Course with id {id} wasn't found.");
+                string message = $"Course with id {id} wasn't found.";
+                _logger.LogInformation(message: message);
                 return NotFound();
             }
 

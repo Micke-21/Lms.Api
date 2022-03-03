@@ -15,6 +15,6 @@ namespace Lms.Core.IDAL
         Task<bool> DeleteCourseByIdAsync(int courseId);
 
         Task<bool> CourseExistsAsync(int courseId);
-        bool Save();
+        Task<bool> SaveAsync();
     }
 }
